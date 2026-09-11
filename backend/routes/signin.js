@@ -1,12 +1,8 @@
 const routerSignin = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
-const { login } = require('../controllers/users');
+const { login, logout } = require('../controllers/users');
 
-routerSignin.get('/crash-test', () => {
-  setTimeout(() => {
-    throw new Error('Сервер сейчас упадёт');
-  }, 0);
-});
+routerSignin.post('/signout', logout);
 
 routerSignin.post('/signin', celebrate({
   body: Joi.object().keys({

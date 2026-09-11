@@ -21,10 +21,10 @@ const createCard = async (req, res, next) => {
     const { name, link } = req.body;
     const ownerId = req.user._id;
     const newCard = await Card.create({ name, link, owner: ownerId });
-    return res.status(201).send(await newCard.save());
+    return res.status(201).send(newCard);
   } catch (err) {
     if (err instanceof mongoose.Error.ValidationError) {
-      return next(ValidationError('Переданы некорректные данные'));
+      return next(new ValidationError('Переданы некорректные данные'));
     }
     return next(err);
   }
@@ -70,10 +70,10 @@ function likeCard(req, res, next) {
     { new: true },
   )
     .then((card) => {
-      if (card) {
-        res.send(card);
+      if (!card) {
+        throw new NotFoundError('Передан несуществующий _id карточки');
       }
-      throw new NotFoundError('Передан несуществующий _id карточки');
+      return res.send(card);
     })
     .catch((err) => {
       if (err instanceof mongoose.Error.CastError) {

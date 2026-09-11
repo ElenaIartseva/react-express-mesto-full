@@ -3,7 +3,8 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
-const { JWT_SECRET, NODE_ENV } = process.env;
+const JWT_SECRET = require('../utils/jwtSecret');
+const { authCookieOptions } = require('../utils/cookies');
 
 const ReRegistrationError = require('../errors/ReRegistrationError');
 const NotFoundError = require('../errors/NotFoundError');
@@ -17,9 +18,10 @@ const login = (req, res, next) => {
     .then((user) => {
       const token = jwt.sign(
         { _id: user._id },
-        NODE_ENV === 'production' ? JWT_SECRET : 'some-secret-key',
+        JWT_SECRET,
         { expiresIn: '7d' },
       );
+      res.cookie('authorization', token, authCookieOptions);
       return res.send({ jwt: token });
     })
     .catch((err) => {
@@ -80,7 +82,7 @@ const getUsers = async (req, res, next) => {
 // GET /users/me - возвращает информацию о текущем пользователе
 const getUserMe = async (req, res, next) => {
   try {
-    const user = await User.findById({ _id: req.user._id });
+    const user = await User.findById(req.user._id);
     if (!user) {
       throw new NotFoundError('Пользователь по указанному _id не найден');
     }
@@ -113,7 +115,7 @@ const updateUser = async (req, res, next) => {
   try {
     const { name, about } = req.body;
     const user = await User.findByIdAndUpdate(
-      { _id: req.user._id },
+      req.user._id,
       { name, about },
       {
         new: true,
@@ -138,7 +140,7 @@ const updateUserAvatar = async (req, res, next) => {
   try {
     const { avatar } = req.body;
     const user = await User.findByIdAndUpdate(
-      { _id: req.user._id },
+      req.user._id,
       { avatar },
       {
         new: true,
@@ -158,8 +160,14 @@ const updateUserAvatar = async (req, res, next) => {
   }
 };
 
+const logout = (req, res) => {
+  res.clearCookie('authorization', authCookieOptions);
+  return res.send({ message: 'Выход выполнен' });
+};
+
 module.exports = {
   login,
+  logout,
   getUsers,
   getUserMe,
   getUserId,

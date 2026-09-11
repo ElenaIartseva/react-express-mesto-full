@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 // компонент авторизации пользователя с необходимыми стейт-переменными
 // из себя представляет форму где пользователь вводит данные (почту и пароль) 
@@ -10,8 +9,6 @@ const Login = (props) => {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
-  const navigate = useNavigate();
 
   const handleSubmit = (evt) => {
     evt.preventDefault();
@@ -27,7 +24,7 @@ const Login = (props) => {
     <div className="login"> 
     <div className="login__container">
       <h3 className="popup__header login__header">Вход</h3>
-      <form action="#" name="login" className=".popup__form"
+      <form action="#" name="login" className="popup__form"
         // noValidate="" вернём, когда будет своя валидация
         onSubmit={handleSubmit}
       >

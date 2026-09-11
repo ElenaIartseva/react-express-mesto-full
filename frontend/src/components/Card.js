@@ -1,5 +1,6 @@
 import React from 'react';
 import { CurrentUserContext } from '../contexts/CurrentUserContext.js';
+import { isOwner, isLikedByUser } from '../utils/cardHelpers.js';
 
 function Card({onCardClick, onCardLike, onCardDelete, ...props}) { 
   //console.log(props)
@@ -14,20 +15,19 @@ function Card({onCardClick, onCardLike, onCardDelete, ...props}) {
   }
 
   const handleDeleteClick = () => {
-    onCardDelete(props._id); 
-    console.log(props._id);
-  }
+    onCardDelete(props._id);
+  };
 
   // подписали его на CurrentUserContext и получили значение контекста
   const currentUser = React.useContext(CurrentUserContext);
   
   // проверяем, есть ли уже лайк на этой карточке
-   const isLiked = props.card.likes.some(id => id === currentUser._id);
+   const isLiked = isLikedByUser(props.card.likes, currentUser._id);
   // создаём переменную, которую после зададим в `className` для кнопки лайка
   const cardLikeButtonClassName = `element__button_like ${isLiked ? 'element__button_like_active' :' '}`;
   
   // для корзины удаления => определяем, являемся ли мы владельцем текущей карточки
-  const isOwn = props.card.owner === currentUser._id;
+  const isOwn = isOwner(props.card.owner, currentUser._id);
   
   // создаём переменную, которую после зададим в `className` для кнопки удаления
   const cardDeleteButtonClassName = 

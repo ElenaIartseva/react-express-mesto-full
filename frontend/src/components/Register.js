@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
 
 // компонент авторизации пользователя с необходимыми стейт-переменными
 // компонент практически полностью дублирует логику компонента выше, 
@@ -14,8 +13,6 @@ const Register = (props) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   
-  const navigate = useNavigate();
-
   const handleSubmit = (evt) => {
     evt.preventDefault();
 
@@ -27,7 +24,7 @@ const Register = (props) => {
     <div className="register"> 
     <div className="login__container">
       <h3 className="popup__header login__header">Регистрация</h3>
-      <form action="#" name="register" className=".popup__form"
+      <form action="#" name="register" className="popup__form"
         // noValidate="" вернём, когда будет своя валидация
         onSubmit={handleSubmit}
       >
@@ -51,7 +48,7 @@ const Register = (props) => {
       </label> 
         <button name="button" type="submit" 
           className="popup__save login__button popup__save_register">Зарегистрироваться</button>
-        <h3 className="login__text">Уже зарегистрированы? <Link to="../sign-in" className="login__link">Войти</Link></h3>
+        <h3 className="login__text">Уже зарегистрированы? <Link to="/sign-in" className="login__link">Войти</Link></h3>
       </form> 
     </div>
   </div>

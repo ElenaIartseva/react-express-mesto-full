@@ -1,123 +1,55 @@
+import { baseURL } from './config.js';
+import { handleResponse } from './apiResponse.js';
+import { jsonFetchOptions } from './fetchOptions.js';
+
 class Api {
   constructor({ baseUrl }) {
     this._url = baseUrl;
   }
 
-  _handleResponse(res) {
-    if (res.ok) {
-      return res.json() // возвращает promise 
-    } else {
-      return Promise.reject(`Ошибка: ${res.status}`) // если ошибка, отклоняет promise 
-    }
-  };
-
-  // карточки при загрузке страницы + загрузка инфо о пользователе с сервера
-  //передаёт массив промисов. первым - карточки, вторым - запрос к информации о пользователе
   getAppInfo() {
-    return Promise.all([this.getCards(), this.getUserIDInfo()]); 
-  };
+    return Promise.all([this.getCards(), this.getUserIDInfo()]);
+  }
 
-  // карточки при загрузке страницы
   getCards() {
-    return fetch(`${this._url}/cards`, {
-      method: "GET",
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
-      },
-    })
-    .then(this._handleResponse)
-  };
+    return fetch(`${this._url}/cards`, jsonFetchOptions('GET'))
+      .then(handleResponse);
+  }
 
-  // загрузка инфо о пользователе с сервера
   getUserIDInfo() {
-    return fetch(`${this._url}/users/me`, {
-      method: "GET",
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
-      },
-    })
-    .then(this._handleResponse)
-  };
+    return fetch(`${this._url}/users/me`, jsonFetchOptions('GET'))
+      .then(handleResponse);
+  }
 
-  // добавление новой карточки => получить данные
-  newCardData({name, link}) {
-    return fetch(`${this._url}/cards`, {
-      method: "POST",
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
-      },
-      body: JSON.stringify({
-        name: name,
-        link: link,
-      })
-    }).then(this._handleResponse)
-  };
+  newCardData({ name, link }) {
+    return fetch(`${this._url}/cards`, jsonFetchOptions('POST', { name, link }))
+      .then(handleResponse);
+  }
 
-  // изменение фотки профиля
   photoOfAvatar(avatar) {
-  return fetch(`${this._url}/users/me/avatar`, {
-    method: "PATCH",
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
-    },
-    body: JSON.stringify(avatar)
-    }).then(this._handleResponse)
-  };
+    return fetch(`${this._url}/users/me/avatar`, jsonFetchOptions('PATCH', avatar))
+      .then(handleResponse);
+  }
 
-  // редактирование профиля
   userInformation({ name, about }) {
-    return fetch(`${this._url}/users/me`, {
-      method: "PATCH",
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
-      },   
-      body: JSON.stringify({
-        name: name,
-        about: about,
-      })
-    }).then(this._handleResponse)
-  };
+    return fetch(`${this._url}/users/me`, jsonFetchOptions('PATCH', { name, about }))
+      .then(handleResponse);
+  }
 
-  // лайки
   addLike(cardID) {
-    return fetch(`${this._url}/cards/${cardID}/likes`, {
-      method: "PUT",
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
-      },
-    }).then(this._handleResponse)
-  };
+    return fetch(`${this._url}/cards/${cardID}/likes`, jsonFetchOptions('PUT'))
+      .then(handleResponse);
+  }
 
   deleteLike(cardID) {
-    return fetch(`${this._url}/cards/${cardID}/likes`, {
-      method: "DELETE",
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
-      },
-    }).then(this._handleResponse)
-  };
+    return fetch(`${this._url}/cards/${cardID}/likes`, jsonFetchOptions('DELETE'))
+      .then(handleResponse);
+  }
 
-  // удаление карточки
   deleteCard(cardID) {
-    return fetch(`${this._url}/cards/${cardID}`, {
-      method: "DELETE",
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
-      },
-    })
-  .then(this._handleResponse)
-};
-};
+    return fetch(`${this._url}/cards/${cardID}`, jsonFetchOptions('DELETE'))
+      .then(handleResponse);
+  }
+}
 
-export const api = new Api({
-  baseUrl: 'https://api.fifteen.nomoredomainsrocks.ru',
-  // baseUrl: 'http://localhost:3000'
-});
+export const api = new Api({ baseUrl: baseURL });

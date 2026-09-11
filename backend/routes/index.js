@@ -12,7 +12,7 @@ router.use('/users', auth, userRoutes);
 router.use('/cards', auth, cardRoutes);
 
 router.all('*', (req, res, next) => {
-  throw next(new NotFoundError('Неверный адрес запроса'));
+  next(new NotFoundError('Неверный адрес запроса'));
 });
 
 module.exports = { router };

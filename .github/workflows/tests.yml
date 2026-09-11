@@ -66,6 +66,9 @@ jobs:
       run: npm install -g wait-port
     - name: Run server
       run: npm --prefix backend/ run start & wait-port -t 30000 localhost:3000
+      env:
+        JWT_SECRET: test_jwt_secret
+        NODE_ENV: development
     - name: Cache test dependencies
       id: cache
       uses: actions/cache@v3

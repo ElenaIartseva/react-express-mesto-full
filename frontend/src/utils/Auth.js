@@ -1,49 +1,25 @@
-// export const baseURL = 'http://localhost:3000';
-export const baseURL = 'https://api.fifteen.nomoredomainsrocks.ru';
+import { baseURL } from './config.js';
+import { handleResponse } from './apiResponse.js';
+import { jsonFetchOptions } from './fetchOptions.js';
 
-// функция register - принимает почту и пароль, отправляет запрос регистрации на /signup
-export const register = ({email, password}) => {
- return fetch(`${baseURL}/signup`, {
-  method: "POST",
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify({ 
-    email,
-    password
-  })
- }).then(handleResponse);
-};
+export { baseURL };
 
-// функция login - принимает почту и пароль, отправляет запрос авторизации на /signin
-// в ответ сервер вернет jwt, который нужно сохранить в localStorage
-export const login = ({ email, password }) => {
-  return fetch(`${baseURL}/signin`, {
-   method: "POST",
-   headers: {
-    'Content-Type': 'application/json'
-   },
-   body: JSON.stringify({ email, password })
-  })
-  .then(handleResponse)
- };
+export const register = ({ email, password }) => fetch(
+  `${baseURL}/signup`,
+  jsonFetchOptions('POST', { email, password }),
+).then(handleResponse);
 
-// функция checkToken - принимает jwt, отправляет запрос на /users/me и 
-// возвращает данные пользователя
-export const checkToken = () => {
-  return fetch(`${baseURL}/users/me`, {
-    method: "GET",
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${localStorage.getItem('jwt')}`,
-    },
-  }).then(handleResponse);
-};
+export const login = ({ email, password }) => fetch(
+  `${baseURL}/signin`,
+  jsonFetchOptions('POST', { email, password }),
+).then(handleResponse);
 
- const handleResponse = (res) => {
-  if (res.ok) {
-    return res.json() // возвращает promise 
-  } else {
-    return Promise.reject(`Ошибка: ${res.status}`) // если ошибка, отклоняет promise 
-  }
-};
+export const logout = () => fetch(
+  `${baseURL}/signout`,
+  jsonFetchOptions('POST'),
+).then(handleResponse);
+
+export const checkToken = () => fetch(
+  `${baseURL}/users/me`,
+  jsonFetchOptions('GET'),
+).then(handleResponse);

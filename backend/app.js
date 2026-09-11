@@ -1,6 +1,5 @@
 require('dotenv').config(); // безопасность ключа
 const express = require('express');
-const json = require('express');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
@@ -11,6 +10,7 @@ const { requestLogger, errorLogger } = require('./middlewares/logger');
 const { router } = require('./routes/index');
 const limiter = require('./middlewares/rateLimiter');
 const { errorHandler } = require('./middlewares/errorHandler');
+const { corsOptions } = require('./utils/corsConfig');
 
 // env хранит все переменные окружения
 const {
@@ -18,30 +18,24 @@ const {
   MONGO_URL = 'mongodb://127.0.0.1:27017/mestodb',
 } = process.env;
 
+require('./utils/jwtSecret');
+
 // создаём приложение
 const app = express();
 
-const corseAllowedOrigins = [
-  'http://fifteen.nomoredomainsrocks.ru',
-  'https://fifteen.nomoredomainsrocks.ru',
-];
-
-app.use(cors({
-  origin: corseAllowedOrigins,
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true,
-}));
+app.use(cors(corsOptions));
 
 app.use(cookieParser()); // для чтения кук
 app.use(helmet()); // для защиты приложения путем настройки заголовков HTTP
 app.use(limiter); // ограничивает количество запросов с одного IP-адреса в единицу времени
 
-mongoose.connect(MONGO_URL); // подключаемся к серверу MongoDB
+mongoose.connect(MONGO_URL).catch((err) => {
+  console.error('MongoDB connection error:', err.message);
+  process.exit(1);
+});
 
-// после инициализации приложения, но до задействования роутов
-app.use(json());
-app.use(bodyParser.json()); // для собирания JSON-формата, объединения пакетов
-app.use(bodyParser.urlencoded({ extended: true })); // для приёма веб-страниц внутри POST-запроса
+app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(requestLogger); // подключаем логгер запросов
 app.use(router);

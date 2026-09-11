@@ -17,7 +17,7 @@ function PopupWithForm(props) {
         <form
           action="#"
           name={`${props.name}`}
-          className=".popup__form"
+          className="popup__form"
           // noValidate="" вернём, когда будет своя валидация
           onSubmit={onSubmit}
         >
