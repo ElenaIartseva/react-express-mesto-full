@@ -1,3 +1,9 @@
-const URL_REGEX = /https?:\/\/(w{3}\.)?[\w\-.~:/?#[\]@!$&'\\()*+,;=]+#?/;
+const validator = require('validator');
 
-module.exports = { URL_REGEX };
+const isValidUrl = (url) => validator.isURL(url, {
+  protocols: ['http', 'https'],
+  require_protocol: true,
+  require_tld: false,
+});
+
+module.exports = { isValidUrl };

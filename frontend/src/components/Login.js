@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useFormWithValidation } from '../hooks/useFormWithValidation.js';
 
 // компонент авторизации пользователя с необходимыми стейт-переменными
 // из себя представляет форму где пользователь вводит данные (почту и пароль) 
@@ -6,18 +7,21 @@ import React, { useState } from 'react';
 // сама функция должна быть описана выше, на уровне app.js
 const Login = (props) => {
   const { onLogin } = props;
-
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const {
+    values,
+    errors,
+    isValid,
+    handleChange,
+  } = useFormWithValidation({ email: '', password: '' });
 
   const handleSubmit = (evt) => {
     evt.preventDefault();
 
-    if (!password || !email) { // проверка почты и пароля 
+    if (!isValid) {
       return;
     }
  
-    onLogin({email, password}) // сюда попадают данные из инпутов
+    onLogin({ email: values.email, password: values.password }) // сюда попадают данные из инпутов
   };
  
   return (
@@ -25,29 +29,30 @@ const Login = (props) => {
     <div className="login__container">
       <h3 className="popup__header login__header">Вход</h3>
       <form action="#" name="login" className="popup__form"
-        // noValidate="" вернём, когда будет своя валидация
+        noValidate
         onSubmit={handleSubmit}
       >
          <label className="popup__field">
         <input id="email-login-input" type="email" name="email"
           className="popup__input popup__input_type_login login__input"
-          placeholder="Email" minLength={2} maxLength={30} required
-          value={email} 
-          onChange={({target: {value}}) => setEmail(value)}
+          placeholder="Email" required
+          value={values.email}
+          onChange={handleChange}
         />
-        <span className="email-input popup__input-error" />
+        <span className="email-input popup__input-error popup__input-error_active">{errors.email}</span>
       </label>
       <label className="popup__field">
         <input id="password-login-input" name="password"
           className="popup__input popup__input_type_password login__input"
-          placeholder="Пароль" type="password" required
-          value={password} 
-          onChange={({target: {value}}) => setPassword(value)}
+          placeholder="Пароль" type="password" minLength={6} required
+          value={values.password}
+          onChange={handleChange}
         />
-        <span className="password-input popup__input-error" />
+        <span className="password-input popup__input-error popup__input-error_active">{errors.password}</span>
       </label> 
         <button name="button" type="submit"
-            className="popup__save login__button popup__save_login">Войти</button>
+            disabled={!isValid}
+            className={`popup__save login__button popup__save_login ${!isValid ? 'popup__save_inactive' : ''}`}>Войти</button>
       </form> 
     </div>
   </div>

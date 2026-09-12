@@ -25,7 +25,7 @@ jobs:
         run: npm run build
         working-directory: frontend
         env:
-          REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL }}
+          VITE_API_URL: ${{ secrets.VITE_API_URL }}
 
       - name: Deploy to server
         env:
@@ -37,5 +37,5 @@ jobs:
           mkdir -p ~/.ssh
           echo "$DEPLOY_SSH_KEY" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
-          scp -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no -r frontend/build/* \
+          scp -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no -r frontend/dist/* \
             "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH"

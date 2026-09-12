@@ -22,7 +22,7 @@ const login = (req, res, next) => {
         { expiresIn: '7d' },
       );
       res.cookie('authorization', token, authCookieOptions);
-      return res.send({ jwt: token });
+      return res.send({ message: 'Вход выполнен' });
     })
     .catch((err) => {
       if (err.name === 'AuthorizationError') {

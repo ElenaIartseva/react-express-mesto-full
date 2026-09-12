@@ -5,7 +5,7 @@ function ImagePopup({onClose, ...props}) {
   // console.log(props)
 
   // используем в любом компоненте (попапе), которому нужно установить эти обработчики
-  usePopupClose(props.card?.link, onClose);
+  usePopupClose(Boolean(props.card), onClose);
 
   // так как card может быть null (не выбран), то нужно это учесть и писать
   // {card?.name} {card?.link} этот оператор будет проверять, есть ли card или нет

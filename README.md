@@ -17,7 +17,10 @@ Full-stack репозиторий проекта `Mesto`: React (frontend) + Exp
 
 ## Стек технологий
 
-![Express.js](https://img.shields.io/badge/express.js-%23404d59.svg?style=for-the-badge&logo=express&logoColor=%2361DAFB) ![NodeJS](https://img.shields.io/badge/node.js-6DA55F?style=for-the-badge&logo=node.js&logoColor=white) ![MongoDB](https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white) ![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
+- Frontend: React, React Router, Vite
+- Backend: Node.js, Express, MongoDB, Mongoose
+- Авторизация и безопасность: JWT, httpOnly cookies, CSRF protection, Helmet, CORS
+- Валидация и тесты: Joi, Jest, Supertest, Vitest, Testing Library
 
 ---
 
@@ -60,16 +63,17 @@ npm start
 | `MONGO_URL` | Строка подключения MongoDB | `mongodb://127.0.0.1:27017/mestodb` |
 | `JWT_SECRET` | Секрет для JWT (обязателен) | произвольная строка |
 | `NODE_ENV` | Режим работы | `development` для локальной разработки |
-| `CORS_ORIGINS` | Разрешённые origins в production (через запятую) | опционально |
+| `CORS_ORIGINS` | Разрешённые origins в production (через запятую) | `https://example.com` |
 
 **Frontend** (`frontend/.env`):
 
 | Переменная | Описание | Пример |
 |---|---|---|
-| `REACT_APP_API_URL` | URL backend API | `http://localhost:3000` |
+| `VITE_API_URL` | URL backend API | `http://localhost:3000` |
 
 > **Важно:** для локальной разработки в backend используйте `NODE_ENV=development`.  
 > В этом режиме CORS автоматически разрешает запросы с любого `localhost:*`.  
+> В production обязательно задайте `CORS_ORIGINS`, иначе браузерные запросы с frontend-домена будут заблокированы.  
 > Авторизация работает через httpOnly cookie — после изменения `.env` перезапустите оба сервера.
 
 ---
@@ -92,7 +96,7 @@ frontend/         — React SPA, роутинг, hooks (useAuth, useCards, usePo
 
 | Secret | Описание |
 |---|---|
-| `REACT_APP_API_URL` | URL production API |
+| `VITE_API_URL` | URL production API |
 | `DEPLOY_HOST` | IP или домен сервера |
 | `DEPLOY_USER` | SSH-пользователь |
 | `DEPLOY_PATH` | Путь к папке frontend на сервере |
@@ -111,7 +115,7 @@ frontend/         — React SPA, роутинг, hooks (useAuth, useCards, usePo
 
 1. `cd backend && npm install && cp .env_example .env && npm run dev`
 2. `cd frontend && npm install && cp .env.example .env && npm start`
-3. Set `REACT_APP_API_URL=http://localhost:3000` in `frontend/.env`
+3. Set `VITE_API_URL=http://localhost:3000` in `frontend/.env`
 4. Set `NODE_ENV=development` in `backend/.env` for local CORS and cookies
 
 **Deploy:** GitHub Actions workflow with SSH secrets (see table above)

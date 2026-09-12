@@ -13,11 +13,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Set up GitHub Actions
-      uses: actions/checkout@v3
-    - name: Use Node.js 16.x
-      uses: actions/setup-node@v3
+      uses: actions/checkout@v4
+    - name: Use Node.js 18.x
+      uses: actions/setup-node@v4
       with:
-        node-version: 16.x
+        node-version: 18.x
     - name: Сheck if the repository is private
       run: exit 1
       if: ${{github.event.repository.private}}
@@ -26,7 +26,8 @@ jobs:
     - name: Copy Makefile
       run: cp ./web-autotest-public/Makefile ./Makefile
     - name: Installing Dependencies
-      run: cd backend&&npm i
+      run: npm ci
+      working-directory: backend
     - name: Cache test dependencies
       id: cache
       uses: actions/cache@v3
@@ -44,11 +45,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Set up GitHub Actions
-      uses: actions/checkout@v3
-    - name: Use Node.js 16.x
-      uses: actions/setup-node@v3
+      uses: actions/checkout@v4
+    - name: Use Node.js 18.x
+      uses: actions/setup-node@v4
       with:
-        node-version: 16.x
+        node-version: 18.x
     - name: Сheck if the repository is private
       run: exit 1
       if: ${{github.event.repository.private}}
@@ -61,7 +62,8 @@ jobs:
       with:
         mongodb-version: '4.4'
     - name: Installing Dependencies
-      run: cd backend&&npm i
+      run: npm ci
+      working-directory: backend
     - name: Installing wait-port
       run: npm install -g wait-port
     - name: Run server

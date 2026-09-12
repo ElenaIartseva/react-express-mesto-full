@@ -73,6 +73,7 @@ function App() {
         <Header
           onSignOut={handleSignout}
           email={currentUser.email || ''}
+          loggedIn={loggedIn}
         />
         <Routes>
           <Route path="/" element={
@@ -119,10 +120,11 @@ function App() {
         <PopupWithForm
           name="confirm-delete"
           title="Вы уверены?"
-          buttonText="Да"
+          buttonText={isLoading ? 'Удаление...' : 'Да'}
           isOpen={isDeletePopupOpen}
           onClose={closeAllPopups}
           onSubmit={(evt) => handleConfirmDelete(evt, deleteCardById)}
+          isLoading={isLoading}
         />
 
         <ImagePopup name="popup_open-image" onClose={closeAllPopups} card={selectedCard} />

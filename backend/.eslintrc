@@ -4,5 +4,13 @@
   ],
   "rules": {
     "no-underscore-dangle": ["error", {"allow": ["_id"] }]
-  }
+  },
+  "overrides": [
+    {
+      "files": ["__tests__/**/*.js"],
+      "env": {
+        "jest": true
+      }
+    }
+  ]
 }

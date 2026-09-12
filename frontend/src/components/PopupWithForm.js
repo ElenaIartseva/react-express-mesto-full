@@ -3,7 +3,14 @@ import { usePopupClose } from '../hooks/usePopupClose.js';
 
 function PopupWithForm(props) {
   // протягиваем сюда isOpen, onClose, чтобы использовать
-  const { isOpen, onClose, onSubmit } = props;
+  const {
+    isOpen,
+    onClose,
+    onSubmit,
+    isLoading = false,
+    isSubmitDisabled = false,
+  } = props;
+  const isButtonDisabled = isLoading || isSubmitDisabled;
 
   // используем в любом компоненте (попапе), которому нужно установить эти обработчики
   usePopupClose(isOpen, onClose);
@@ -18,14 +25,15 @@ function PopupWithForm(props) {
           action="#"
           name={`${props.name}`}
           className="popup__form"
-          // noValidate="" вернём, когда будет своя валидация
+          noValidate
           onSubmit={onSubmit}
         >
            {props.children} 
           <button
               name="button"
               type="submit"
-              className={`popup__save popup__save_${props.name}`}> 
+              disabled={isButtonDisabled}
+              className={`popup__save popup__save_${props.name} ${isButtonDisabled ? 'popup__save_inactive' : ''}`}> 
                 {props.buttonText}
           </button>
         </form> 

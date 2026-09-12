@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt');
 const mongoose = require('mongoose');
 const validator = require('validator');
-const { URL_REGEX } = require('../utils/constants');
+const { isValidUrl } = require('../utils/constants');
 const AuthorizationError = require('../errors/AuthorizationError');
 
 const userSchema = new mongoose.Schema({
@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png',
     validate: {
-      validator: (url) => URL_REGEX.test(url),
+      validator: isValidUrl,
       message: 'Некорректные данные, введите URL',
     },
   },
@@ -42,7 +42,7 @@ const userSchema = new mongoose.Schema({
 }, { toObject: { useProjection: true }, toJSON: { useProjection: true } });
 // чтобы пароль не возвращался ^
 
-userSchema.statics.findUserByCredentials = function (email, password) {
+userSchema.statics.findUserByCredentials = function findUserByCredentials(email, password) {
   // попытаемся найти пользователя по почте
   return this.findOne({ email }) // this — это модель User
     .select('+password')

@@ -1,25 +1,28 @@
 import { baseURL } from './config.js';
 import { handleResponse } from './apiResponse.js';
-import { jsonFetchOptions } from './fetchOptions.js';
+import { clearCsrfToken, fetchJson } from './fetchOptions.js';
 
 export { baseURL };
 
-export const register = ({ email, password }) => fetch(
+export const register = ({ email, password }) => fetchJson(
   `${baseURL}/signup`,
-  jsonFetchOptions('POST', { email, password }),
+  'POST',
+  { email, password },
 ).then(handleResponse);
 
-export const login = ({ email, password }) => fetch(
+export const login = ({ email, password }) => fetchJson(
   `${baseURL}/signin`,
-  jsonFetchOptions('POST', { email, password }),
+  'POST',
+  { email, password },
 ).then(handleResponse);
 
-export const logout = () => fetch(
+export const logout = () => fetchJson(
   `${baseURL}/signout`,
-  jsonFetchOptions('POST'),
-).then(handleResponse);
+  'POST',
+).then(handleResponse)
+  .finally(clearCsrfToken);
 
-export const checkToken = () => fetch(
+export const checkToken = () => fetchJson(
   `${baseURL}/users/me`,
-  jsonFetchOptions('GET'),
+  'GET',
 ).then(handleResponse);

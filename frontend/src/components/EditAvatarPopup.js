@@ -1,28 +1,31 @@
 import React from 'react';
-import { CurrentUserContext } from '../contexts/CurrentUserContext.js';
 import { PopupWithForm } from './PopupWithForm.js';
+import { useFormWithValidation } from '../hooks/useFormWithValidation.js';
 
 function EditAvatarPopup(props) {
   const { isOpen, onClose, isLoading } = props;
+  const {
+    values,
+    errors,
+    isValid,
+    handleChange,
+    resetForm,
+  } = useFormWithValidation({ avatar: '' });
 
-// подписываемся на CurrentUserContext и получаем значение контекста
-const currentUser = React.useContext(CurrentUserContext);
-
-// записываем объект, возвращаемый хуком, в переменную
- const avatarRef = React.useRef('');
+  React.useEffect(() => {
+    resetForm({ avatar: '' });
+  }, [isOpen, resetForm]);
 
  function handleSubmit(evt) {
    evt.preventDefault();
    props.onUpdateAvatar({
-    // вызываем нужный метод на поле current объекта
-      avatar: avatarRef.current.value, // значение инпута, полученное с помощью рефа
+      avatar: values.avatar,
    });
  }
 
-// указали элементу атрибут ref => получили прямой доступ к DOM-элементу
   return(
     <PopupWithForm name="popup_update-avatar" title="Обновить аватар" isOpen={isOpen} 
-        onClose={onClose} buttonText={isLoading ? 'Сохранение...' : 'Сохранить'} onSubmit={handleSubmit}>
+        onClose={onClose} buttonText={isLoading ? 'Сохранение...' : 'Сохранить'} onSubmit={handleSubmit} isLoading={isLoading} isSubmitDisabled={!isValid}>
             <label className="popup__field">
               <input
                 id="link-inputAvatar"
@@ -31,9 +34,10 @@ const currentUser = React.useContext(CurrentUserContext);
                 placeholder="Ссылка на картинку"
                 type="url"
                 required
-                ref={avatarRef}
+                value={values.avatar}
+                onChange={handleChange}
               />
-              <span className="link-input popup__input-error" />
+              <span className="link-input popup__input-error popup__input-error_active">{errors.avatar}</span>
             </label>
         </PopupWithForm>
   )

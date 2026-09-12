@@ -1,6 +1,6 @@
 import { baseURL } from './config.js';
 import { handleResponse } from './apiResponse.js';
-import { jsonFetchOptions } from './fetchOptions.js';
+import { fetchJson } from './fetchOptions.js';
 
 class Api {
   constructor({ baseUrl }) {
@@ -12,42 +12,42 @@ class Api {
   }
 
   getCards() {
-    return fetch(`${this._url}/cards`, jsonFetchOptions('GET'))
+    return fetchJson(`${this._url}/cards`, 'GET')
       .then(handleResponse);
   }
 
   getUserIDInfo() {
-    return fetch(`${this._url}/users/me`, jsonFetchOptions('GET'))
+    return fetchJson(`${this._url}/users/me`, 'GET')
       .then(handleResponse);
   }
 
   newCardData({ name, link }) {
-    return fetch(`${this._url}/cards`, jsonFetchOptions('POST', { name, link }))
+    return fetchJson(`${this._url}/cards`, 'POST', { name, link })
       .then(handleResponse);
   }
 
   photoOfAvatar(avatar) {
-    return fetch(`${this._url}/users/me/avatar`, jsonFetchOptions('PATCH', avatar))
+    return fetchJson(`${this._url}/users/me/avatar`, 'PATCH', avatar)
       .then(handleResponse);
   }
 
   userInformation({ name, about }) {
-    return fetch(`${this._url}/users/me`, jsonFetchOptions('PATCH', { name, about }))
+    return fetchJson(`${this._url}/users/me`, 'PATCH', { name, about })
       .then(handleResponse);
   }
 
   addLike(cardID) {
-    return fetch(`${this._url}/cards/${cardID}/likes`, jsonFetchOptions('PUT'))
+    return fetchJson(`${this._url}/cards/${cardID}/likes`, 'PUT')
       .then(handleResponse);
   }
 
   deleteLike(cardID) {
-    return fetch(`${this._url}/cards/${cardID}/likes`, jsonFetchOptions('DELETE'))
+    return fetchJson(`${this._url}/cards/${cardID}/likes`, 'DELETE')
       .then(handleResponse);
   }
 
   deleteCard(cardID) {
-    return fetch(`${this._url}/cards/${cardID}`, jsonFetchOptions('DELETE'))
+    return fetchJson(`${this._url}/cards/${cardID}`, 'DELETE')
       .then(handleResponse);
   }
 }

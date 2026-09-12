@@ -3,14 +3,13 @@ const express = require('express');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
 const cookieParser = require('cookie-parser');
-const bodyParser = require('body-parser');
-const { errors } = require('celebrate'); // отправить клиенту ошибку
 const cors = require('cors');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const { router } = require('./routes/index');
 const limiter = require('./middlewares/rateLimiter');
 const { errorHandler } = require('./middlewares/errorHandler');
 const { corsOptions } = require('./utils/corsConfig');
+const { csrfProtection } = require('./middlewares/csrf');
 
 // env хранит все переменные окружения
 const {
@@ -20,7 +19,6 @@ const {
 
 require('./utils/jwtSecret');
 
-// создаём приложение
 const app = express();
 
 app.use(cors(corsOptions));
@@ -29,21 +27,35 @@ app.use(cookieParser()); // для чтения кук
 app.use(helmet()); // для защиты приложения путем настройки заголовков HTTP
 app.use(limiter); // ограничивает количество запросов с одного IP-адреса в единицу времени
 
-mongoose.connect(MONGO_URL).catch((err) => {
-  console.error('MongoDB connection error:', err.message);
-  process.exit(1);
-});
+const connectDatabase = () => mongoose.connect(MONGO_URL);
 
 app.use(express.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true }));
 
 app.use(requestLogger); // подключаем логгер запросов
+app.use(csrfProtection);
 app.use(router);
 app.use(errorLogger); // подключаем логгер ошибок
-app.use(errors()); // обработчик ошибок celebrate
 app.use(errorHandler); // middleware для ошибок
 
-// запускаем сервер, слушаем порт 3000
-app.listen(PORT, () => {
-  console.log(`Server listen port ${PORT}`);
-});
+const startServer = async () => {
+  try {
+    await connectDatabase();
+    app.listen(PORT, () => {
+      process.stdout.write(`Server listen port ${PORT}\n`);
+    });
+  } catch (err) {
+    process.stderr.write(`MongoDB connection error: ${err.message}\n`);
+    process.exit(1);
+  }
+};
+
+if (require.main === module) {
+  startServer();
+}
+
+module.exports = {
+  app,
+  connectDatabase,
+  startServer,
+};

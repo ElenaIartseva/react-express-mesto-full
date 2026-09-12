@@ -29,10 +29,6 @@ function Card({onCardClick, onCardLike, onCardDelete, ...props}) {
   // для корзины удаления => определяем, являемся ли мы владельцем текущей карточки
   const isOwn = isOwner(props.card.owner, currentUser._id);
   
-  // создаём переменную, которую после зададим в `className` для кнопки удаления
-  const cardDeleteButtonClassName = 
-  `${isOwn ? 'element__button_delete' : ' '}`;
-  
   return (
           <li className="element">
             <div className="element__group_image">
@@ -41,7 +37,9 @@ function Card({onCardClick, onCardLike, onCardDelete, ...props}) {
               alt={props.name}
               onClick={handleClick}
               />
-              <button className={cardDeleteButtonClassName} type="button" onClick={handleDeleteClick}></button>
+              {isOwn && (
+                <button className="element__button_delete" type="button" onClick={handleDeleteClick}></button>
+              )}
             </div>
             <div className="element__group_like">
               <h2 className="element__title">{props.name}</h2>

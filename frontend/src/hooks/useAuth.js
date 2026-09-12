@@ -8,20 +8,20 @@ export function useAuth({
   showError,
   showRegisterFeedback,
 }) {
-  const [loggedIn, setLoggedIn] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(null);
 
   useEffect(() => {
     checkToken()
       .then((res) => {
         if (!res) {
-          navigate('/sign-in');
+          setLoggedIn(false);
           return;
         }
         setLoggedIn(true);
         return loadAppInfo().catch(showError);
       })
       .catch(() => {
-        navigate('/sign-in');
+        setLoggedIn(false);
       });
   }, [navigate, loadAppInfo, showError]);
 

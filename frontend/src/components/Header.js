@@ -8,7 +8,7 @@ import { Link, useLocation } from 'react-router-dom';
 // для отображения соответствующей ссылки на странице можно использовать <Route />
 
 function Header(props) {
-  const { onSignOut, email } = props;
+  const { onSignOut, email, loggedIn } = props;
   // console.log(email)
 
   // хук, который может вернуть объект с данными о текущем роуте
@@ -19,7 +19,7 @@ function Header(props) {
   
   const isSignUp = location.pathname === '/sign-up'
   const isLogin = location.pathname === '/sign-in'
-  const isLoginIn = location.pathname === '/'
+  const isProtectedPage = loggedIn && location.pathname === '/'
 
   return (
     <header className="header">
@@ -29,10 +29,12 @@ function Header(props) {
         alt="место Россия на английском языке"
       />
       <div className="header__links">
-      {isLoginIn && <p className="header__email">{email}</p>}
+      {isProtectedPage && <p className="header__email">{email}</p>}
       {(isSignUp || isLogin) && <Link className="header__link" to={isSignUp ? '/sign-in' : '/sign-up'}>
         {isSignUp ? 'Войти' : 'Регистрация'}</Link>}
-      {isLoginIn && (<Link to="/sign-in" className="header__exit" onClick={onSignOut}>Выйти</Link>)}
+      {isProtectedPage && (
+        <button type="button" className="header__exit" onClick={onSignOut}>Выйти</button>
+      )}
       </div>
     </header>
   )

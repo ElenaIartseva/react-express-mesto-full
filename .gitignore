@@ -28,6 +28,7 @@ node_modules
 
 # production
 /build
+/frontend/dist
 
 # misc
 .DS_Store

@@ -1,49 +1,34 @@
 import React from 'react';
-import { CurrentUserContext } from '../contexts/CurrentUserContext.js';
 import { PopupWithForm } from './PopupWithForm.js';
+import { useFormWithValidation } from '../hooks/useFormWithValidation.js';
 
 
 function AddPlacePopup(props) {
   const { isOpen, onClose, isLoading } = props;
-
-  // подписываемся на CurrentUserContext и получаем значение контекста
-  const currentUser = React.useContext(CurrentUserContext); 
- 
-  // cтейт, в котором содержится значение инпута
-  const [name, setName] = React.useState('');
-  const [link, setLink] = React.useState('');
-
-  // обработчик изменения инпута обновляет стейт
-  function handleChangeName(evt) {
-    setName(evt.target.value);
-  };
-
-  function handleChangeLink(evt) {
-    setLink(evt.target.value);
-  };
-
-  React.useEffect(() => {
-    setName(name);
-    setLink(link);
-  }, [isOpen]);
+  const {
+    values,
+    errors,
+    isValid,
+    handleChange,
+    resetForm,
+  } = useFormWithValidation({ name: '', link: '' });
 
   // очищение инпутов после успешного добавления карточки,  для того чтобы пользователь мог сразу же 
   // еще раз добавить что-то новое и ему не пришлось бы очищать инпуты вручную перед этим
   React.useEffect(() => {
-    setName('');
-    setLink('');
-  }, [isOpen]);
+    resetForm({ name: '', link: '' });
+  }, [isOpen, resetForm]);
 
   const handleSubmit = (evt) => {
     // запрещаем браузеру переходить по адресу формы
     evt.preventDefault();
     // передаём значения управляемых компонентов во внешний обработчик
-    props.onAddPlace({ name: name, link: link });
+    props.onAddPlace({ name: values.name, link: values.link });
   };
 
   return (
   <PopupWithForm name="popup_add-image" title="Новое место" isOpen={isOpen} 
-  onClose={onClose} buttonText={isLoading ? 'Сохранение...' : 'Сохранить'} onSubmit={handleSubmit} >
+  onClose={onClose} buttonText={isLoading ? 'Сохранение...' : 'Сохранить'} onSubmit={handleSubmit} isLoading={isLoading} isSubmitDisabled={!isValid}>
       <label className="popup__field">
         <input
           id="place-input"
@@ -54,10 +39,10 @@ function AddPlacePopup(props) {
           minLength={2}
           maxLength={30}
           required
-          value={name} 
-          onChange={handleChangeName}
+          value={values.name}
+          onChange={handleChange}
         />
-        <span className="place-input popup__input-error" />
+        <span className="place-input popup__input-error popup__input-error_active">{errors.name}</span>
       </label>
       <label className="popup__field">
         <input
@@ -67,10 +52,10 @@ function AddPlacePopup(props) {
           placeholder="Ссылка на картинку"
           type="url"
           required
-          value={link} 
-          onChange={handleChangeLink}
+          value={values.link}
+          onChange={handleChange}
         />
-        <span className="link-input popup__input-error" />
+        <span className="link-input popup__input-error popup__input-error_active">{errors.link}</span>
       </label>
   </PopupWithForm>
 )};
